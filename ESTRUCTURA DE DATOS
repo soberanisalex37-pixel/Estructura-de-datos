@@ -1,0 +1,19 @@
+from collections import deque
+# ENTRADA
+cola = deque()
+cola.append("Tarea 1")
+cola.append("Tarea 2")
+cola.append("Tarea 3")
+
+# PROCESO
+print("Cola actual:", list(cola))
+primero = cola.popleft()
+print("Elemento atendido:", primero)
+print("Cola después de atender:", list(cola))
+if not cola:
+    resultado = "La cola está vacía"
+else:
+    resultado = f"Elementos restantes en la cola: {list(cola)}"
+
+# SALIDA
+print("Resultado final:", resultado)
