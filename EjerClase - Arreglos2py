@@ -1,0 +1,27 @@
+import random
+import time
+
+num_alumnos = 500
+num_materias = 6
+
+
+matriz = [[random.randint(0, 100) for _ in range(num_alumnos)] for _ in range(num_materias)]
+
+
+print("Tabla de Calificaciones (Filas = Materias, Columnas = Alumnos):\n")
+
+print("Materia\t" + "\t".join([f"A{i+1}" for i in range(10)]) + " ... A500")
+for j in range(num_materias):
+    fila = "\t".join(str(m) for m in matriz[j][:10])  
+    print(f"M{j+1}\t{fila}\t... {matriz[j][-1]}")  
+
+
+alumno_buscar = 321
+materia_buscar = 5
+
+inicio = time.time()
+calificacion = matriz[materia_buscar - 1][alumno_buscar - 1]
+fin = time.time()
+
+print(f"\nCalificación del Alumno {alumno_buscar} en Materia {materia_buscar}: {calificacion}")
+print(f"Tiempo de búsqueda: {fin - inicio:.10f} segundos")
