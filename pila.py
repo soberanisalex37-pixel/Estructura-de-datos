@@ -2,7 +2,7 @@ pila = []
 tamaño = 10
 
 while True:
-    print("PROGRAMA PILAMA")
+    print("PROGRAMA PILA")
     print("1. INSERTAR DATO")
     print("2. SACAR DATO")
     print("3. MOSTRAR PILA")
