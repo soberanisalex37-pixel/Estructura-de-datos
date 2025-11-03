@@ -2,14 +2,12 @@ import tkinter as tk
 from tkinter import Toplevel, Canvas
 from collections import deque
 
-# ------------------ NODO ------------------
 class Nodo:
     def __init__(self, dato):
         self.dato = dato
         self.izq = None
         self.der = None
 
-# ------------------ ARBOL ------------------
 class ArbolBinario:
     def __init__(self):
         self.raiz = None
@@ -35,9 +33,7 @@ class ArbolBinario:
                 self._insertar(nodo.der, dato)
             else:
                 nodo.der = Nodo(dato)
-        # duplicados no insertados (la interfaz valida antes)
 
-    # Buscar (boolean)
     def buscar(self, dato):
         return self._buscar(self.raiz, dato)
 
@@ -51,7 +47,7 @@ class ArbolBinario:
         else:
             return self._buscar(nodo.der, dato)
 
-    # Recorridos que retornan listas de nodos (objetos)
+  
     def preorden_nodes(self, nodo, lista):
         if nodo:
             lista.append(nodo)
@@ -70,7 +66,7 @@ class ArbolBinario:
             self.postorden_nodes(nodo.der, lista)
             lista.append(nodo)
 
-    # Recorrido por niveles que devuelve nodos
+  
     def recorrido_por_niveles_nodes(self):
         if self.raiz is None:
             return []
@@ -85,7 +81,7 @@ class ArbolBinario:
                 cola.append(nodo.der)
         return resultado
 
-    # Métodos que devuelven valores (listas de datos) - usables en la interfaz textual
+  
     def preorden(self, nodo, lista):
         if nodo:
             lista.append(nodo.dato)
@@ -118,7 +114,7 @@ class ArbolBinario:
                 cola.append(nodo.der)
         return resultado
 
-    # Eliminar (predecesor o sucesor)
+ 
     def eliminar(self, dato, modo='predecesor'):
         self.raiz = self._eliminar(self.raiz, dato, modo)
 
@@ -130,7 +126,7 @@ class ArbolBinario:
         elif dato > nodo.dato:
             nodo.der = self._eliminar(nodo.der, dato, modo)
         else:
-            # encontrado
+            
             if nodo.izq is None:
                 return nodo.der
             elif nodo.der is None:
@@ -156,7 +152,6 @@ class ArbolBinario:
             nodo = nodo.der
         return nodo
 
-    # Altura, hojas, conteos
     def altura(self, nodo):
         if nodo is None:
             return 0
@@ -174,7 +169,7 @@ class ArbolBinario:
             return 0
         return 1 + self.contar_nodos(nodo.izq) + self.contar_nodos(nodo.der)
 
-    # Completo / Lleno
+
     def es_completo(self):
         if self.raiz is None:
             return True
@@ -208,7 +203,6 @@ class ArbolBinario:
     def eliminar_arbol(self):
         self.raiz = None
 
-# ------------------ INTERFAZ VISUAL ------------------
 class Interfaz:
     def __init__(self, root):
         self.arbol = ArbolBinario()
@@ -217,7 +211,6 @@ class Interfaz:
         self.root.geometry("1150x800")
         self.root.config(bg="#e8f0fe")
 
-        # Top frame (entrada y botones)
         frame_top = tk.Frame(root, bg="#e8f0fe")
         frame_top.pack(pady=8, fill="x")
 
@@ -227,33 +220,32 @@ class Interfaz:
         tk.Button(frame_top, text="Insertar", command=self.insertar, bg="#4CAF50", fg="white").pack(side=tk.LEFT, padx=4)
         tk.Button(frame_top, text="Eliminar (Predecesor)", command=lambda: self.eliminar("predecesor"), bg="#ff7043").pack(side=tk.LEFT, padx=4)
         tk.Button(frame_top, text="Eliminar (Sucesor)", command=lambda: self.eliminar("sucesor"), bg="#ff7043").pack(side=tk.LEFT, padx=4)
-        # Buscar directo: resalta el nodo si existe (verde brillante)
+     
         tk.Button(frame_top, text="Buscar (resaltar)", command=self.buscar_resaltar, bg="#2196F3", fg="white").pack(side=tk.LEFT, padx=4)
         tk.Button(frame_top, text="Ver árbol acostado 🌲", command=self.mostrar_arbol_acostado, bg="#7e57c2", fg="white").pack(side=tk.LEFT, padx=8)
 
-        # Opciones
+        
         self.mostrar_contador_var = tk.BooleanVar(value=False)
         tk.Checkbutton(frame_top, text="Mostrar conteo subnodos", variable=self.mostrar_contador_var,
                        bg="#e8f0fe").pack(side=tk.LEFT, padx=6)
 
-        # Canvas con scroll
+       
         frame_canvas = tk.Frame(root, bg="#e8f0fe")
         frame_canvas.pack(pady=8)
 
         self.scrollbar = tk.Scrollbar(frame_canvas, orient=tk.VERTICAL)
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        # Canvas grande para dibujo (scroll vertical)
+      
         self.canvas = tk.Canvas(frame_canvas, bg="white", width=1080, height=500,
                                 yscrollcommand=self.scrollbar.set)
         self.canvas.pack(side=tk.LEFT)
         self.scrollbar.config(command=self.canvas.yview)
 
-        # área de texto
+        
         self.text = tk.Text(root, height=8, width=135, font=("Consolas", 11))
         self.text.pack(pady=8)
 
-        # Botones inferiores (recorridos y utilidades)
         frame_bottom = tk.Frame(root, bg="#e8f0fe")
         frame_bottom.pack(pady=6)
 
@@ -270,7 +262,7 @@ class Interfaz:
         for txt, cmd in botones:
             tk.Button(frame_bottom, text=txt, command=cmd, bg="#90caf9", width=16).pack(side=tk.LEFT, padx=4, pady=4)
 
-        # Más botones
+      
         frame_more = tk.Frame(root, bg="#e8f0fe")
         frame_more.pack(pady=4)
         tk.Button(frame_more, text="Altura", command=self.altura, bg="#aed581", width=12).pack(side=tk.LEFT, padx=4)
@@ -280,33 +272,32 @@ class Interfaz:
         tk.Button(frame_more, text="¿Lleno?", command=self.lleno, bg="#ffcc80", width=12).pack(side=tk.LEFT, padx=4)
         tk.Button(frame_more, text="Eliminar Árbol", command=self.eliminar_arbol, bg="#ef9a9a", width=14).pack(side=tk.LEFT, padx=8)
 
-        # Paleta de colores por nivel
+     
         self.colores_niveles = ["#81c784", "#4fc3f7", "#ba68c8", "#ffb74d", "#ef5350", "#aed581", "#7986cb", "#f06292"]
 
-        # Mappings para animación / manipulación: nodo_obj -> (oval_id, text_id, color_original)
+      
         self.mapa_nodos = {}
-        # Posiciones de nodos dibujados: nodo_obj -> (x,y)
+      
         self.mapa_pos = {}
 
-        # Mantener scrollregion inicial grande para que se pueda desplazar antes de dibujar
+    
         self.canvas.config(scrollregion=(0, 0, 2000, 2000))
 
-    # ------------------ UTIL: MODAL BONITO ------------------
+
     def show_modal(self, title, message, kind="info"):
-        # kind: "info" or "error"
+        
         modal = Toplevel(self.root)
         modal.transient(self.root)
         modal.grab_set()
         modal.title(title)
         modal.config(bg="#ffffff")
-        # centrar modal
+       
         modal.geometry("360x120")
         modal.update_idletasks()
         x = self.root.winfo_x() + (self.root.winfo_width() // 2) - (360 // 2)
         y = self.root.winfo_y() + (self.root.winfo_height() // 2) - (120 // 2)
         modal.geometry(f"+{x}+{y}")
 
-        # Contenido
         frame = tk.Frame(modal, bg="#ffffff", padx=12, pady=10)
         frame.pack(expand=True, fill="both")
         lbl = tk.Label(frame, text=message, bg="#ffffff", font=("Arial", 11), wraplength=320, justify="center")
@@ -315,7 +306,7 @@ class Interfaz:
         tk.Button(frame, text="Aceptar", bg=btn_bg, fg="white", command=modal.destroy, width=10).pack(pady=(6,0))
         self.root.wait_window(modal)
 
-    # ------------------ FUNCIONES BASICAS ------------------
+   
     def insertar(self):
         try:
             dato = int(self.entry.get())
@@ -323,7 +314,7 @@ class Interfaz:
             self.show_modal("Error", "Ingrese un número válido (entero).", kind="error")
             return
 
-        # Validación duplicados: si existe, mostrar error y no insertar
+        
         if self.arbol.buscar(dato):
             self.show_modal("Duplicado", f"El valor {dato} ya existe en el árbol. No se inserta duplicado.", kind="error")
             return
@@ -341,7 +332,7 @@ class Interfaz:
         except ValueError:
             self.show_modal("Error", "Ingrese un número válido (entero).", kind="error")
 
-    # ------------------ BUSCAR: resaltar directamente (verde brillante) ------------------
+    
     def buscar_resaltar(self):
         try:
             target = int(self.entry.get())
@@ -353,7 +344,7 @@ class Interfaz:
             self.show_modal("Vacío", "El árbol está vacío 🌱", kind="info")
             return
 
-        # buscar la referencia al nodo (BST search) — sin animación de recorrido
+   
         node = self.arbol.raiz
         found_node = None
         while node:
@@ -365,32 +356,30 @@ class Interfaz:
             else:
                 node = node.der
 
-        # si no se encontró
+     
         if found_node is None:
             self.show_modal("Buscar", f"Valor {target} NO encontrado ❌", kind="info")
             return
 
-        # asegurar que el árbol esté dibujado y mapa_nodos esté poblado
         self.dibujar()
 
-        # si no está en mapa_nodos (raro), redibujar
         if found_node not in self.mapa_nodos:
             self.dibujar()
 
         if found_node not in self.mapa_nodos:
-            # fallback: informar pero no crash
+           
             self.show_modal("Buscar", f"Valor {target} encontrado (pero no se pudo resaltar visualmente).", kind="info")
             return
 
         oval_id, text_id, color_original = self.mapa_nodos[found_node]
-        # animación: parpadeo verde brillante 3 veces
-        highlight = "#00e676"  # verde brillante
+
+        highlight = "#00e676" 
         flashes = 3
-        interval = 450  # ms
+        interval = 450  
 
         def flash_step(i):
             if i >= flashes * 2:
-                # restaurar color original y abrir modal informativo
+
                 self.canvas.itemconfig(oval_id, fill=color_original)
                 self.show_modal("Buscar", f"Valor {target} encontrado ✅", kind="info")
                 return
@@ -403,7 +392,7 @@ class Interfaz:
         flash_step(0)
 
     def buscar(self):
-        # textual (no usado mucho ahora)
+   
         try:
             dato = int(self.entry.get())
             encontrado = self.arbol.buscar(dato)
@@ -415,11 +404,11 @@ class Interfaz:
         h = self.arbol.altura(self.arbol.raiz)
         self.text.insert(tk.END, f"Altura del árbol: {h}\n")
 
-    # Nota: hojas() y nodos() muestran animación además del texto (orden por niveles)
+   
     def hojas(self):
         h = self.arbol.contar_hojas(self.arbol.raiz)
         self.text.insert(tk.END, f"Hojas: {h}\n")
-        # animar solo las hojas (orden por niveles)
+      
         if self.arbol.raiz:
             all_nodes = self.arbol.recorrido_por_niveles_nodes()
             hojas_nodes = [n for n in all_nodes if (n.izq is None and n.der is None)]
@@ -429,7 +418,7 @@ class Interfaz:
     def nodos(self):
         n = self.arbol.contar_nodos(self.arbol.raiz)
         self.text.insert(tk.END, f"Nodos: {n}\n")
-        # animar todos los nodos en orden por niveles
+
         if self.arbol.raiz:
             nodes = self.arbol.recorrido_por_niveles_nodes()
             if nodes:
@@ -450,16 +439,16 @@ class Interfaz:
         self.mapa_pos.clear()
         self.text.insert(tk.END, "Árbol eliminado 🗑️\n")
 
-    # ------------------ DIBUJAR ÁRBOL (VERTICAL, CON SCROLL) ------------------
+
     def dibujar(self):
         self.canvas.delete("all")
         self.mapa_nodos.clear()
         self.mapa_pos.clear()
         if not self.arbol.raiz:
             return
-        # dibujar recursivamente y guardar referencias
+     
         self._dibujar_nodo(self.arbol.raiz, 540, 40, 220, 0)
-        # Ajustar scrollregion a lo dibujado
+
         bbox = self.canvas.bbox("all")
         if bbox:
             self.canvas.config(scrollregion=bbox)
@@ -470,7 +459,7 @@ class Interfaz:
         r = 22
         color_nivel = self.colores_niveles[nivel % len(self.colores_niveles)]
 
-        # líneas y subárboles
+        
         if nodo.izq:
             self.canvas.create_line(x, y, x - separacion, y + 90)
             self._dibujar_nodo(nodo.izq, x - separacion, y + 90, separacion / 1.7, nivel + 1)
@@ -478,19 +467,18 @@ class Interfaz:
             self.canvas.create_line(x, y, x + separacion, y + 90)
             self._dibujar_nodo(nodo.der, x + separacion, y + 90, separacion / 1.7, nivel + 1)
 
-        # oval y texto (guardar IDs)
+       
         oval = self.canvas.create_oval(x - r, y - r, x + r, y + r, fill=color_nivel, outline="#263238", width=2)
         text_id = self.canvas.create_text(x, y, text=str(nodo.dato), font=("Arial", 12, "bold"), fill="white")
         self.mapa_nodos[nodo] = (oval, text_id, color_nivel)
         self.mapa_pos[nodo] = (x, y)
 
-        # si está activado el contador de subnodos, mostrarlo como texto pequeño debajo
         if self.mostrar_contador_var.get():
             cnt = self.arbol.contar_nodos(nodo)
-            # colocar un texto pequeño bajo el nodo
+           
             self.canvas.create_text(x, y + r + 10, text=str(cnt), font=("Arial", 8), fill="#37474f")
 
-    # ------------------ VISTA ACOSTADA (RAÍZ A LA IZQUIERDA) ------------------
+   
     def mostrar_arbol_acostado(self):
         if not self.arbol.raiz:
             self.show_modal("Vacío", "El árbol está vacío 🌱", kind="info")
@@ -498,14 +486,14 @@ class Interfaz:
 
         ventana = Toplevel(self.root)
         ventana.title("Árbol Acostado 🌲 (Raíz a la izquierda)")
-        # Canvas con scroll vertical
+      
         canvas = Canvas(ventana, width=1000, height=700, bg="white")
         canvas.pack(fill="both", expand=True, side=tk.LEFT)
         scroll_y = tk.Scrollbar(ventana, orient="vertical", command=canvas.yview)
         scroll_y.pack(side="right", fill="y")
         canvas.config(yscrollcommand=scroll_y.set)
 
-        # dibujar acostado (recursivo)
+      
         self._dibujar_acostado(canvas, self.arbol.raiz, 60, 360, 140, 0)
         bbox = canvas.bbox("all")
         if bbox:
@@ -517,21 +505,21 @@ class Interfaz:
         r = 20
         color = self.colores_niveles[nivel % len(self.colores_niveles)]
 
-        # dibujar subárbol derecho hacia arriba (derecha y arriba)
+      
         if nodo.der:
             canvas.create_line(x + r, y, x + sep, y - 90)
             self._dibujar_acostado(canvas, nodo.der, x + sep, y - 90, sep, nivel + 1)
 
-        # nodo actual (en la columna actual)
+       
         canvas.create_oval(x - r, y - r, x + r, y + r, fill=color, outline="#263238", width=2)
         canvas.create_text(x, y, text=str(nodo.dato), font=("Arial", 11, "bold"), fill="white")
 
-        # subárbol izquierdo hacia abajo
+      
         if nodo.izq:
             canvas.create_line(x + r, y, x + sep, y + 90)
             self._dibujar_acostado(canvas, nodo.izq, x + sep, y + 90, sep, nivel + 1)
 
-    # ------------------ ANIMACIONES: iluminar + mostrar número de orden ------------------
+ 
     def animar_preorden(self):
         if not self.arbol.raiz:
             self.show_modal("Vacío", "El árbol está vacío 🌱", kind="info")
@@ -567,13 +555,11 @@ class Interfaz:
         self.text.insert(tk.END, f"Por Niveles: {[n.dato for n in nodes]}\n")
         self._animar_lista_nodes(nodes)
 
-    # Animación centralizada: recibe lista de nodos (objetos)
-    # Añadido argumento callback opcional que se ejecuta al terminar
     def _animar_lista_nodes(self, nodes, delay_ms=650, callback=None):
-        # asegurar que el dibujo esté actualizado y mapa de posiciones exista
+     
         self.dibujar()
 
-        # eliminar cualquier etiquetas de orden antiguas primero
+        
         if not nodes:
             if callback:
                 callback()
@@ -583,39 +569,37 @@ class Interfaz:
 
         def anim_step(i):
             if i >= len(nodes):
-                # limpiar etiquetas temporales después de un pequeño retardo y ejecutar callback
+             
                 self.root.after(400, lambda: [self.canvas.delete(eid) for eid in etiquetas_temporales])
                 if callback:
-                    # llamar callback un instante después de borrar etiquetas
+                 
                     self.root.after(450, callback)
                 return
 
             nodo = nodes[i]
             if nodo not in self.mapa_nodos:
-                # si por alguna razón no está mapeado (p.e. no dibujado), saltar
                 self.root.after(delay_ms, lambda: anim_step(i + 1))
                 return
 
             oval_id, texto_id, color_original = self.mapa_nodos[nodo]
-            # iluminar (cambiar fill)
-            highlight_color = "#ffd54f"  # amarillo suave
+           
+            highlight_color = "#ffd54f"  
             self.canvas.itemconfig(oval_id, fill=highlight_color)
 
-            # crear etiqueta con número de orden cerca del nodo (arriba-derecha)
+          
             x, y = self.mapa_pos.get(nodo, (0, 0))
             etiqueta = self.canvas.create_text(x + 28, y - 18, text=f"{i+1}", font=("Arial", 10, "bold"),
                                                fill="#000000", anchor="nw", tags=("etiqueta_orden",))
             etiquetas_temporales.append(etiqueta)
 
-            # después de la mitad del delay, restaurar color original (pero mantener etiqueta hasta el final)
+          
             self.root.after(delay_ms // 2, lambda oid=oval_id, col=color_original: self.canvas.itemconfig(oid, fill=col))
-            # pasar al siguiente
+          
             self.root.after(delay_ms, lambda: anim_step(i + 1))
 
-        # iniciar animación
+      
         anim_step(0)
 
-    # ------------------ FUNCIONES TEXTO (sin animación) ------------------
     def preorden_texto(self):
         lista = []
         self.arbol.preorden(self.arbol.raiz, lista)
@@ -635,8 +619,8 @@ class Interfaz:
         lista = self.arbol.recorrido_por_niveles()
         self.text.insert(tk.END, f"Por niveles: {lista}\n")
 
-# ------------------ MAIN ------------------
 if __name__ == "__main__":
     root = tk.Tk()
     app = Interfaz(root)
     root.mainloop()
+
