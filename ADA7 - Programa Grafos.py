@@ -1,5 +1,3 @@
-# grafo_mexico_final_v2.py
-
 import tkinter as tk
 from tkinter import ttk, messagebox
 from tkinter import simpledialog
@@ -11,9 +9,6 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-# -----------------------
-# CENTROIDES (lat, lon)
-# -----------------------
 CENTROIDES = {
     "Aguascalientes": (21.8823, -102.2826),
     "Baja California": (30.8406, -115.2838),
@@ -49,15 +44,11 @@ CENTROIDES = {
     "Zacatecas": (22.7709, -102.5832)
 }
 
-# -----------------------
-# Parámetros / extent
-# -----------------------
+
 EXTENT = [-118, -86, 14, 33]
 MAX_DIST_KM = 350.0
 
-# -----------------------
-# Funciones geográficas
-# -----------------------
+
 def haversine_km(lat1, lon1, lat2, lon2):
     R = 6371.0
     dlat = math.radians(lat2 - lat1)
@@ -76,15 +67,13 @@ def estado_mas_cercano(lat_click, lon_click):
             best = est
     return best, best_d
 
-# -----------------------
-# App
-# -----------------------
+
 class GrafosApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Grafo interactivo - México (mapa)")
 
-        # Load image
+        
         try:
             pil_img = Image.open("mapa.png").convert("RGBA")
         except Exception as e:
@@ -96,12 +85,12 @@ class GrafosApp:
         self.img_arr = np.array(pil_img)
         self.map_img = mpimg.imread("mapa.png")
 
-        # Variables
+        
         self.G = nx.Graph()
         self.positions = {}
         self.selected_node = None
 
-        # Top controls
+        
         top_frame = tk.Frame(root)
         top_frame.pack(fill=tk.X, padx=6, pady=6)
         tk.Label(top_frame, text="Estados a seleccionar (recomendado 7):").pack(side=tk.LEFT)
@@ -118,7 +107,7 @@ class GrafosApp:
         btn_clear = tk.Button(top_frame, text="Limpiar todo", command=self.limpiar_todo)
         btn_clear.pack(side=tk.RIGHT)
 
-        # Botones eliminar
+        
         btn_frame_del = tk.Frame(root)
         btn_frame_del.pack(fill=tk.X, padx=6, pady=(0,6))
         self.btn_del_node = tk.Button(btn_frame_del, text="Eliminar nodo", command=self.eliminar_nodo)
@@ -126,7 +115,7 @@ class GrafosApp:
         self.btn_del_edge = tk.Button(btn_frame_del, text="Eliminar arista", command=self.eliminar_arista)
         self.btn_del_edge.pack(side=tk.LEFT, padx=6)
 
-        # Botones animaciones
+        
         btn_frame2 = tk.Frame(root)
         btn_frame2.pack(fill=tk.X, padx=6, pady=(0,6))
         self.btn_ham = tk.Button(btn_frame2, text="Recorrido sin repetición (Hamiltoniano)", command=self.run_hamiltonian_animation)
@@ -134,7 +123,7 @@ class GrafosApp:
         self.btn_walk = tk.Button(btn_frame2, text="Recorrido con repetición (aleatorio)", command=self.run_walk_animation)
         self.btn_walk.pack(side=tk.LEFT, padx=6)
 
-        # Main area
+    
         main_frame = tk.Frame(root)
         main_frame.pack(fill=tk.BOTH, expand=True)
         map_frame = tk.Frame(main_frame)
@@ -146,7 +135,7 @@ class GrafosApp:
         self.ax.set_title("Clic izquierdo: agregar nodo | Clic derecho: seleccionar/conectar")
         self.canvas.mpl_connect("button_press_event", self.on_click)
 
-        # Right panel
+        
         right_frame = tk.Frame(main_frame, width=360)
         right_frame.pack(side=tk.RIGHT, fill=tk.Y)
         tk.Label(right_frame, text="Resultados", font=("Arial", 12, "bold")).pack(pady=(6,2))
@@ -169,9 +158,8 @@ class GrafosApp:
 
         self.draw()
 
-    # -----------------------
-    # Coordenadas y clic sobre imagen
-    # -----------------------
+
+   
     def lonlat_to_pixel(self, lon, lat):
         lon_min, lon_max, lat_min, lat_max = EXTENT[0], EXTENT[1], EXTENT[2], EXTENT[3]
         u = (lon - lon_min) / (lon_max - lon_min)
@@ -189,15 +177,13 @@ class GrafosApp:
         r,g,b = pixel[0]/255,pixel[1]/255,pixel[2]/255
         return (r+g+b)/3.0 <= whiteness_thresh
 
-    # -----------------------
-    # Clic izquierdo/derecho
-    # -----------------------
+ 
     def on_click(self, event):
         if event.inaxes != self.ax: return
         lon, lat = event.xdata, event.ydata
         if lon is None or lat is None: return
 
-        # Clic izquierdo: agregar nodo
+      
         if event.button==1:
             max_nodes = int(self.var_num.get())
             if len(self.G.nodes) >= max_nodes:
@@ -220,7 +206,7 @@ class GrafosApp:
             if len(self.G.nodes)==max_nodes:
                 messagebox.showinfo("Nodos completos", f"Se han agregado todos los nodos ({max_nodes}). Conecta con clic derecho.")
 
-        # Clic derecho: seleccionar/conectar
+       
         elif event.button==3:
             nodo = self.node_nearby(lon, lat)
             if nodo is None: 
@@ -247,18 +233,14 @@ class GrafosApp:
                     self.ax.set_title("Clic izquierdo: agregar nodo | Clic derecho: seleccionar/conectar")
                     self.draw()
 
-    # -----------------------
-    # Buscar nodo cercano
-    # -----------------------
+  
     def node_nearby(self, lon, lat, tol_deg=0.6):
         for n,(nx_,ny_) in self.positions.items():
             if abs(nx_-lon)<=tol_deg and abs(ny_-lat)<=tol_deg:
                 return n
         return None
 
-    # -----------------------
-    # Dibujar
-    # -----------------------
+    
     def draw(self):
         self.ax.clear()
         self.ax.imshow(self.map_img, extent=EXTENT, aspect='auto')
@@ -268,18 +250,14 @@ class GrafosApp:
             if edge_labels: nx.draw_networkx_edge_labels(self.G,self.positions,edge_labels=edge_labels,ax=self.ax,font_color='red')
         self.canvas.draw_idle()
 
-    # -----------------------
-    # Logs
-    # -----------------------
+   
     def log(self,text):
         self.txt_log.config(state=tk.NORMAL)
         self.txt_log.insert(tk.END,f"{text}\n")
         self.txt_log.see(tk.END)
         self.txt_log.config(state=tk.DISABLED)
 
-    # -----------------------
-    # Limpiar todo
-    # -----------------------
+ 
     def limpiar_todo(self):
         self.G.clear()
         self.positions.clear()
@@ -288,9 +266,7 @@ class GrafosApp:
         self.draw()
         self.log("Todo limpiado.")
 
-    # -----------------------
-    # Eliminar nodo/arista
-    # -----------------------
+  
     def eliminar_nodo(self):
         if not self.G.nodes:
             messagebox.showinfo("Info","No hay nodos para eliminar")
@@ -322,9 +298,7 @@ class GrafosApp:
         self.draw()
         self.log(f"Arista eliminada: {nodo1} ↔ {nodo2}")
 
-    # -----------------------
-    # Recorridos Hamiltoniano y aleatorio
-    # -----------------------
+   
     def best_hamiltonian(self):
         nodes=list(self.G.nodes)
         if not nodes: return None,None
@@ -360,9 +334,7 @@ class GrafosApp:
         if len(visited)==len(nodes): return walk,round(total,2)
         else: return None,None
 
-    # -----------------------
-    # Animaciones
-    # -----------------------
+    
     def animate_path(self,path,color='yellow',speed=0.0035,steps=30):
         if not path or len(path)<2: return
         dot, = self.ax.plot([],[],marker='o',color='magenta',markersize=10,zorder=12)
@@ -377,9 +349,7 @@ class GrafosApp:
                 self.canvas.draw(); self.root.update(); time.sleep(speed)
         dot.remove(); self.canvas.draw(); self.root.config(cursor="")
 
-    # -----------------------
-    # Run animations
-    # -----------------------
+  
     def run_hamiltonian_animation(self):
         ham_path, ham_cost=self.best_hamiltonian()
         price=float(self.var_price.get())
@@ -431,10 +401,9 @@ class GrafosApp:
             self.tree.insert("",tk.END,values=("Repitiendo (aleatorio)","No hay","No hay"))
             self.log("Walk: no se pudo generar")
 
-# -----------------------
-# Ejecutar app
-# -----------------------
+
 if __name__=="__main__":
     root=tk.Tk()
     app=GrafosApp(root)
     root.mainloop()
+
